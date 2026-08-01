@@ -52,15 +52,23 @@ export function SiteNav() {
               {l.label}
             </Link>
           ))}
-          <a
-            href={profile.resumeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 rounded-md bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Resume
-          </a>
+          <span className="mx-2 h-5 w-px bg-border" />
+          {socials.map(({ href, Icon, label }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+              className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
+            >
+              <Icon className="h-4 w-4" />
+            </a>
+          ))}
+          <ResumeButton variant="compact" label="Resume" className="ml-2" />
         </div>
+
 
         <button
           type="button"
