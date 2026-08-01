@@ -117,14 +117,8 @@ function Home() {
               >
                 Get a project <ArrowRight className="h-4 w-4" />
               </Link>
-              <a
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-semibold transition-colors hover:border-primary/60"
-              >
-                <Download className="h-4 w-4" /> My Resume
-              </a>
+              <ResumeButton variant="outline" />
+
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
