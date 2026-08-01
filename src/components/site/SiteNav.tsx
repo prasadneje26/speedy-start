@@ -1,7 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { profile } from "@/data/portfolio";
+import { ResumeButton } from "@/components/site/ResumeButton";
+
+const socials = [
+  { href: `mailto:${profile.email}`, Icon: Mail, label: "Email Prasad Neje" },
+  { href: profile.github, Icon: Github, label: "GitHub profile" },
+  { href: profile.linkedin, Icon: Linkedin, label: "LinkedIn profile" },
+] as const;
+
 
 const links = [
   { to: "/", label: "Home" },
