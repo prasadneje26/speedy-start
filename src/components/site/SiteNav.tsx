@@ -68,8 +68,13 @@ export function SiteNav() {
               <Icon className="h-4 w-4" />
             </a>
           ))}
+          <ThemeToggle className="ml-1.5 h-8 w-8" />
           <ResumeButton variant="compact" label="Resume" className="ml-2" />
         </div>
+
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
+
 
 
         <button
