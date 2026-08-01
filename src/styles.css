@@ -41,8 +41,44 @@
   --animate-pulse-ring: pulse-ring 3s ease-out infinite;
 }
 
+/* Light theme (default tokens). The dark theme below is the design's origin
+   look and stays the default applied theme via the boot script in __root. */
 :root {
   --radius: 0.9rem;
+  --background: oklch(0.985 0.006 80);
+  --foreground: oklch(0.24 0.02 264);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.02 264);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.02 264);
+  --primary: oklch(0.6 0.2 34);
+  --primary-foreground: oklch(0.99 0.005 80);
+  --secondary: oklch(0.94 0.01 70);
+  --secondary-foreground: oklch(0.28 0.02 264);
+  --muted: oklch(0.95 0.008 70);
+  --muted-foreground: oklch(0.5 0.02 264);
+  --accent: oklch(0.62 0.16 48);
+  --accent-foreground: oklch(0.99 0.005 80);
+  --destructive: oklch(0.58 0.21 25);
+  --destructive-foreground: oklch(0.99 0.005 80);
+  --border: oklch(0.87 0.012 70 / 90%);
+  --input: oklch(0.87 0.012 70);
+  --ring: oklch(0.6 0.2 34);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.965 0.008 75);
+  --glow: oklch(0.6 0.2 34 / 22%);
+  --gradient-hero: radial-gradient(
+      900px 620px at 72% 8%,
+      oklch(0.66 0.19 34 / 14%),
+      transparent 62%
+    ),
+    radial-gradient(700px 500px at 0% 10%, oklch(0.72 0.16 48 / 10%), transparent 60%);
+  --gradient-text: linear-gradient(100deg, oklch(0.28 0.03 264), oklch(0.58 0.2 36));
+  --shadow-elevated: 0 24px 60px -28px oklch(0.4 0.03 264 / 30%);
+  --shadow-glow: 0 0 0 1px oklch(0.6 0.2 34 / 22%), 0 20px 60px -24px var(--glow);
+}
+
+.dark {
   --background: oklch(0.19 0.022 264);
   --foreground: oklch(0.97 0.005 250);
   --card: oklch(0.228 0.024 264);
@@ -75,6 +111,7 @@
   --shadow-elevated: 0 24px 60px -24px oklch(0.1 0.02 264 / 80%);
   --shadow-glow: 0 0 0 1px oklch(0.645 0.192 34 / 28%), 0 20px 60px -20px var(--glow);
 }
+
 
 
 @keyframes fade-up {
