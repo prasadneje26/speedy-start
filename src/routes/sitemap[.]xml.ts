@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { posts, projects } from "@/data/portfolio";
 
-const BASE_URL = "https://sentient-portfolio-hub.lovable.app";
+const BASE_URL = "";
 
 interface SitemapEntry {
   path: string;

@@ -1,7 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { profile } from "@/data/portfolio";
+import { ResumeButton } from "@/components/site/ResumeButton";
+
+const socials = [
+  { href: `mailto:${profile.email}`, Icon: Mail, label: "Email Prasad Neje" },
+  { href: profile.github, Icon: Github, label: "GitHub profile" },
+  { href: profile.linkedin, Icon: Linkedin, label: "LinkedIn profile" },
+] as const;
+
 
 const links = [
   { to: "/", label: "Home" },
@@ -44,15 +52,23 @@ export function SiteNav() {
               {l.label}
             </Link>
           ))}
-          <a
-            href={profile.resumeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 rounded-md bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Resume
-          </a>
+          <span className="mx-2 h-5 w-px bg-border" />
+          {socials.map(({ href, Icon, label }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+              className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
+            >
+              <Icon className="h-4 w-4" />
+            </a>
+          ))}
+          <ResumeButton variant="compact" label="Resume" className="ml-2" />
         </div>
+
 
         <button
           type="button"
@@ -77,14 +93,27 @@ export function SiteNav() {
                 {l.label}
               </Link>
             ))}
-            <a
-              href={profile.resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground"
-            >
-              View Resume
-            </a>
+            <ResumeButton
+              variant="primary"
+              label="View Resume"
+              className="mt-1 w-full py-2.5"
+              onClick={() => setOpen(false)}
+            />
+            <div className="mt-3 flex gap-2 border-t border-border pt-3">
+              {socials.map(({ href, Icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+
           </div>
         </div>
       )}

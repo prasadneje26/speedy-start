@@ -16,10 +16,10 @@ export const Route = createFileRoute("/certifications")({
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/certifications" },
+      { property: "og:url", content: "/certifications" },
     ],
     links: [
-      { rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/certifications" },
+      { rel: "canonical", href: "/certifications" },
     ],
   }),
   component: Certifications,

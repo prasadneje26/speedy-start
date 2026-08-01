@@ -22,10 +22,10 @@ export const Route = createFileRoute("/projects/$slug")({
         { property: "og:title", content: t },
         { property: "og:description", content: loaderData.project.summary },
         { property: "og:type", content: "article" },
-        { property: "og:url", content: `https://sentient-portfolio-hub.lovable.app/projects/${params.slug}` },
+        { property: "og:url", content: `/projects/${params.slug}` },
         { name: "twitter:card", content: "summary_large_image" },
       ],
-      links: [{ rel: "canonical", href: `https://sentient-portfolio-hub.lovable.app/projects/${params.slug}` }],
+      links: [{ rel: "canonical", href: `/projects/${params.slug}` }],
     };
   },
   component: ProjectDetail,

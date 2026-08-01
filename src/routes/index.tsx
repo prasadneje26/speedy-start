@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Brain,
-  Download,
   Github,
   Layers,
   Linkedin,
@@ -12,7 +11,10 @@ import {
 } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ProjectCard } from "@/components/site/ProjectCard";
+import { ProfilePhoto } from "@/components/site/ProfilePhoto";
+import { ResumeButton } from "@/components/site/ResumeButton";
 import { profile, projects, research, skillGroups, stats } from "@/data/portfolio";
+
 
 const marqueeItems = [
   "Python",
@@ -45,25 +47,30 @@ const services = [
 ];
 
 
-const title = "Prasad Neje — AI Engineer, ML Engineer & GenAI Developer";
+const title = "Prasad Neje — AI Engineer & GenAI Developer Portfolio";
 const description =
-  "Portfolio of Prasad Vitthal Neje: AI/ML engineering projects, LLM-powered platforms, IEEE research and a built-in AI assistant that answers questions about his profile.";
+  "Prasad Neje builds ML models, LLM-powered products and FastAPI/React systems end to end. Case studies, IEEE research, coding profiles and CV — plus an AI assistant that answers questions about him.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title },
       { name: "description", content: description },
+      {
+        name: "keywords",
+        content:
+          "Prasad Neje, AI engineer, machine learning engineer, GenAI developer, LLM, FastAPI, React, VIT Pune, portfolio",
+      },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/" },
+      { property: "og:site_name", content: profile.shortName },
+      { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
     ],
-    links: [
-      { rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/" },
-      { rel: "preload", as: "image", href: profile.photo, fetchpriority: "high" },
-    ],
+    links: [{ rel: "canonical", href: "/" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -71,12 +78,33 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "Person",
           name: profile.name,
+          alternateName: profile.shortName,
           jobTitle: profile.roles.join(", "),
-          email: profile.email,
-          address: profile.location,
-          alumniOf: "Vishwakarma Institute of Technology, Pune",
+          description: profile.summary,
+          email: `mailto:${profile.email}`,
+          telephone: profile.phone,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Pune",
+            addressRegion: "Maharashtra",
+            addressCountry: "IN",
+          },
+          alumniOf: {
+            "@type": "CollegeOrUniversity",
+            name: "Vishwakarma Institute of Technology, Pune",
+          },
+          knowsAbout: [
+            "Machine Learning",
+            "Explainable AI",
+            "Large Language Models",
+            "RAG Pipelines",
+            "FastAPI",
+            "React",
+          ],
+          sameAs: [profile.github, profile.linkedin, profile.leetcode],
         }),
       },
+
     ],
   }),
   component: Home,
@@ -102,10 +130,18 @@ function Home() {
             </div>
             <h1 className="mt-4 text-4xl font-bold leading-[1.05] sm:text-6xl">
               <span className="text-gradient">AI Engineer</span>
+              <span className="mt-2 block text-xl font-semibold text-foreground/80 sm:text-2xl">
+                building ML systems, LLM products and the APIs behind them
+              </span>
             </h1>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
               {profile.summary}
             </p>
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+              Currently open to AI/ML engineering internships and freelance builds — from a first
+              trained model to a deployed, explainable product.
+            </p>
+
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -114,14 +150,8 @@ function Home() {
               >
                 Get a project <ArrowRight className="h-4 w-4" />
               </Link>
-              <a
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-semibold transition-colors hover:border-primary/60"
-              >
-                <Download className="h-4 w-4" /> My Resume
-              </a>
+              <ResumeButton variant="outline" />
+
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
@@ -156,17 +186,8 @@ function Home() {
           <div className="relative mx-auto aspect-square w-full max-w-sm">
             <div className="portrait-ring absolute inset-0 rounded-full opacity-90 blur-[2px]" />
             <div className="absolute inset-[7%] overflow-hidden rounded-full border border-border bg-surface shadow-elevated">
-              <img
-                src={profile.photo}
-                alt={`Portrait of ${profile.name}`}
-                width={520}
-                height={520}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                sizes="(max-width: 768px) 80vw, 340px"
-                className="h-full w-full object-cover object-top"
-              />
+              <ProfilePhoto />
+
 
             </div>
             <div className="glass absolute bottom-2 left-0 rounded-xl px-4 py-3 shadow-elevated animate-float">

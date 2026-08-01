@@ -16,9 +16,9 @@ export const Route = createFileRoute("/experience")({
       { property: "og:description", content: description },
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/experience" },
+      { property: "og:url", content: "/experience" },
     ],
-    links: [{ rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/experience" }],
+    links: [{ rel: "canonical", href: "/experience" }],
   }),
   component: Experience,
 });

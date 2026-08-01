@@ -19,10 +19,10 @@ export const Route = createFileRoute("/coding")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/coding" },
+      { property: "og:url", content: "/coding" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/coding" }],
+    links: [{ rel: "canonical", href: "/coding" }],
   }),
   component: Coding,
 });

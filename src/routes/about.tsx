@@ -14,10 +14,10 @@ export const Route = createFileRoute("/about")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/about" },
+      { property: "og:url", content: "/about" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/about" }],
+    links: [{ rel: "canonical", href: "/about" }],
   }),
   component: About,
 });

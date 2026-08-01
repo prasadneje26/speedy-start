@@ -11,7 +11,7 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ loaderData, params }) => {
     const t = loaderData ? `${loaderData.title} — Prasad Neje` : "Article — Prasad Neje";
     const d = loaderData?.excerpt ?? "An article by Prasad Neje on AI engineering.";
-    const url = `https://sentient-portfolio-hub.lovable.app/blog/${params.slug}`;
+    const url = `/blog/${params.slug}`;
     return {
       meta: [
         { title: t },
