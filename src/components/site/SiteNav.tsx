@@ -99,7 +99,7 @@ export function SiteNav() {
               className="mt-1 w-full py-2.5"
               onClick={() => setOpen(false)}
             />
-            <div className="mt-3 flex gap-2 border-t border-border pt-3">
+            <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
               {socials.map(({ href, Icon, label }) => (
                 <a
                   key={label}
@@ -112,7 +112,9 @@ export function SiteNav() {
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
+              <ThemeToggle className="ml-auto" />
             </div>
+
 
           </div>
         </div>
