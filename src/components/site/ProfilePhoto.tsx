@@ -44,7 +44,6 @@ export function ProfilePhoto({ className = "" }: { className?: string }) {
       loading="eager"
       decoding="async"
       sizes="(max-width: 768px) 80vw, 340px"
-      onError={() => setFailed(true)}
       className={`h-full w-full object-cover object-top ${className}`}
     />
   );
