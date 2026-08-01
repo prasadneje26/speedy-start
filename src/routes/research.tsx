@@ -15,10 +15,10 @@ export const Route = createFileRoute("/research")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/research" },
+      { property: "og:url", content: "/research" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/research" }],
+    links: [{ rel: "canonical", href: "/research" }],
     scripts: [
       {
         type: "application/ld+json",

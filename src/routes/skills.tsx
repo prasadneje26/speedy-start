@@ -15,9 +15,9 @@ export const Route = createFileRoute("/skills")({
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/skills" },
+      { property: "og:url", content: "/skills" },
     ],
-    links: [{ rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/skills" }],
+    links: [{ rel: "canonical", href: "/skills" }],
   }),
   component: Skills,
 });

@@ -18,10 +18,10 @@ export const Route = createFileRoute("/contact")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/contact" },
+      { property: "og:url", content: "/contact" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/contact" }],
+    links: [{ rel: "canonical", href: "/contact" }],
   }),
   component: Contact,
 });
