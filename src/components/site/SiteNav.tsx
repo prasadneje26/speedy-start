@@ -93,14 +93,27 @@ export function SiteNav() {
                 {l.label}
               </Link>
             ))}
-            <a
-              href={profile.resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground"
-            >
-              View Resume
-            </a>
+            <ResumeButton
+              variant="primary"
+              label="View Resume"
+              className="mt-1 w-full py-2.5"
+              onClick={() => setOpen(false)}
+            />
+            <div className="mt-3 flex gap-2 border-t border-border pt-3">
+              {socials.map(({ href, Icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+
           </div>
         </div>
       )}
