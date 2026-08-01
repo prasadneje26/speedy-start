@@ -48,25 +48,30 @@ const services = [
 ];
 
 
-const title = "Prasad Neje — AI Engineer, ML Engineer & GenAI Developer";
+const title = "Prasad Neje — AI Engineer & GenAI Developer Portfolio";
 const description =
-  "Portfolio of Prasad Vitthal Neje: AI/ML engineering projects, LLM-powered platforms, IEEE research and a built-in AI assistant that answers questions about his profile.";
+  "Prasad Neje builds ML models, LLM-powered products and FastAPI/React systems end to end. Case studies, IEEE research, coding profiles and CV — plus an AI assistant that answers questions about him.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title },
       { name: "description", content: description },
+      {
+        name: "keywords",
+        content:
+          "Prasad Neje, AI engineer, machine learning engineer, GenAI developer, LLM, FastAPI, React, VIT Pune, portfolio",
+      },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: "https://sentient-portfolio-hub.lovable.app/" },
+      { property: "og:site_name", content: profile.shortName },
+      { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
     ],
-    links: [
-      { rel: "canonical", href: "https://sentient-portfolio-hub.lovable.app/" },
-      { rel: "preload", as: "image", href: profile.photo, fetchpriority: "high" },
-    ],
+    links: [{ rel: "canonical", href: "/" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -74,12 +79,33 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "Person",
           name: profile.name,
+          alternateName: profile.shortName,
           jobTitle: profile.roles.join(", "),
-          email: profile.email,
-          address: profile.location,
-          alumniOf: "Vishwakarma Institute of Technology, Pune",
+          description: profile.summary,
+          email: `mailto:${profile.email}`,
+          telephone: profile.phone,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Pune",
+            addressRegion: "Maharashtra",
+            addressCountry: "IN",
+          },
+          alumniOf: {
+            "@type": "CollegeOrUniversity",
+            name: "Vishwakarma Institute of Technology, Pune",
+          },
+          knowsAbout: [
+            "Machine Learning",
+            "Explainable AI",
+            "Large Language Models",
+            "RAG Pipelines",
+            "FastAPI",
+            "React",
+          ],
+          sameAs: [profile.github, profile.linkedin, profile.leetcode],
         }),
       },
+
     ],
   }),
   component: Home,
