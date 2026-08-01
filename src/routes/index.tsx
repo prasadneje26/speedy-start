@@ -156,17 +156,8 @@ function Home() {
           <div className="relative mx-auto aspect-square w-full max-w-sm">
             <div className="portrait-ring absolute inset-0 rounded-full opacity-90 blur-[2px]" />
             <div className="absolute inset-[7%] overflow-hidden rounded-full border border-border bg-surface shadow-elevated">
-              <img
-                src={profile.photo}
-                alt={`Portrait of ${profile.name}`}
-                width={520}
-                height={520}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                sizes="(max-width: 768px) 80vw, 340px"
-                className="h-full w-full object-cover object-top"
-              />
+              <ProfilePhoto />
+
 
             </div>
             <div className="glass absolute bottom-2 left-0 rounded-xl px-4 py-3 shadow-elevated animate-float">
