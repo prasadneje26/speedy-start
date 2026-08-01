@@ -3,6 +3,8 @@ import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { profile } from "@/data/portfolio";
 import { ResumeButton } from "@/components/site/ResumeButton";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
+
 
 const socials = [
   { href: `mailto:${profile.email}`, Icon: Mail, label: "Email Prasad Neje" },
@@ -66,18 +68,22 @@ export function SiteNav() {
               <Icon className="h-4 w-4" />
             </a>
           ))}
+          <ThemeToggle className="ml-1.5 h-8 w-8" />
           <ResumeButton variant="compact" label="Resume" className="ml-2" />
         </div>
 
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            onClick={() => setOpen((v) => !v)}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border"
+          >
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
 
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          onClick={() => setOpen((v) => !v)}
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border lg:hidden"
-        >
-          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
       </nav>
 
       {open && (
@@ -99,7 +105,7 @@ export function SiteNav() {
               className="mt-1 w-full py-2.5"
               onClick={() => setOpen(false)}
             />
-            <div className="mt-3 flex gap-2 border-t border-border pt-3">
+            <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
               {socials.map(({ href, Icon, label }) => (
                 <a
                   key={label}
@@ -112,7 +118,9 @@ export function SiteNav() {
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
+              <ThemeToggle className="ml-auto" />
             </div>
+
 
           </div>
         </div>
