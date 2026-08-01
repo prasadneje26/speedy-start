@@ -1,0 +1,93 @@
+import { Link } from "@tanstack/react-router";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { profile } from "@/data/portfolio";
+
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
+  { to: "/skills", label: "Skills" },
+  { to: "/projects", label: "Projects" },
+  { to: "/experience", label: "Experience" },
+  { to: "/coding", label: "Coding" },
+  { to: "/research", label: "Research" },
+  { to: "/certifications", label: "Certifications" },
+  { to: "/blog", label: "Blog" },
+  { to: "/contact", label: "Contact" },
+] as const;
+
+export function SiteNav() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="sticky top-0 z-40 glass">
+      <nav className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-3.5">
+        <Link to="/" className="flex min-w-0 items-center gap-2.5">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary font-mono text-sm font-bold text-primary-foreground">
+            PN
+          </span>
+          <span className="truncate font-display text-sm font-bold tracking-tight sm:text-base">
+            {profile.shortName}
+          </span>
+        </Link>
+
+        <div className="hidden items-center gap-0.5 lg:flex">
+          {links.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              activeOptions={{ exact: l.to === "/" }}
+              activeProps={{ className: "text-foreground bg-secondary/70" }}
+              inactiveProps={{ className: "text-muted-foreground" }}
+              className="rounded-md px-2.5 py-1.5 text-[13px] transition-colors hover:text-foreground"
+            >
+              {l.label}
+            </Link>
+          ))}
+          <a
+            href={profile.resumeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-2 rounded-md bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            Resume
+          </a>
+        </div>
+
+        <button
+          type="button"
+          aria-label="Toggle menu"
+          onClick={() => setOpen((v) => !v)}
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border lg:hidden"
+        >
+          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        </button>
+      </nav>
+
+      {open && (
+        <div className="border-t border-border px-5 py-3 lg:hidden">
+          <div className="flex flex-col gap-1">
+            {links.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                onClick={() => setOpen(false)}
+                className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+              >
+                {l.label}
+              </Link>
+            ))}
+            <a
+              href={profile.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground"
+            >
+              View Resume
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
