@@ -3,6 +3,8 @@ import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { profile } from "@/data/portfolio";
 import { ResumeButton } from "@/components/site/ResumeButton";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
+
 
 const socials = [
   { href: `mailto:${profile.email}`, Icon: Mail, label: "Email Prasad Neje" },
