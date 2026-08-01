@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { profile } from "@/data/portfolio";
 
 /**
- * Portrait with a graceful monogram fallback: if the photo asset is missing
- * or fails to load, we render initials instead of a broken image frame.
+ * Portrait with a graceful monogram fallback. We start on the monogram and only
+ * swap in the photo once it has actually decoded, so a missing/404 asset never
+ * renders a broken image frame (SSR markup would miss a client-side onError).
  */
 export function ProfilePhoto({ className = "" }: { className?: string }) {
-  const [failed, setFailed] = useState(!profile.photo);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!profile.photo) return;
+    const img = new Image();
+    img.src = profile.photo;
+    img.onload = () => setLoaded(true);
+  }, []);
 
   const initials = profile.name
     .split(" ")
@@ -14,7 +22,7 @@ export function ProfilePhoto({ className = "" }: { className?: string }) {
     .slice(0, 2)
     .join("");
 
-  if (failed) {
+  if (!loaded) {
     return (
       <div
         aria-label={`Portrait placeholder for ${profile.name}`}
@@ -25,6 +33,7 @@ export function ProfilePhoto({ className = "" }: { className?: string }) {
       </div>
     );
   }
+
 
   return (
     <img
