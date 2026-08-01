@@ -74,17 +74,16 @@ export function SiteNav() {
 
         <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            onClick={() => setOpen((v) => !v)}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border"
+          >
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
 
-
-
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          onClick={() => setOpen((v) => !v)}
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border lg:hidden"
-        >
-          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
       </nav>
 
       {open && (
