@@ -15,6 +15,8 @@ import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { AiAssistant } from "@/components/site/AiAssistant";
 import { Toaster } from "@/components/ui/sonner";
+import { themeBootScript } from "@/components/site/ThemeToggle";
+
 
 function NotFoundComponent() {
   return (
