@@ -12,7 +12,10 @@ import {
 } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ProjectCard } from "@/components/site/ProjectCard";
+import { ProfilePhoto } from "@/components/site/ProfilePhoto";
+import { ResumeButton } from "@/components/site/ResumeButton";
 import { profile, projects, research, skillGroups, stats } from "@/data/portfolio";
+
 
 const marqueeItems = [
   "Python",
