@@ -105,10 +105,18 @@ function Home() {
             </div>
             <h1 className="mt-4 text-4xl font-bold leading-[1.05] sm:text-6xl">
               <span className="text-gradient">AI Engineer</span>
+              <span className="mt-2 block text-xl font-semibold text-foreground/80 sm:text-2xl">
+                building ML systems, LLM products and the APIs behind them
+              </span>
             </h1>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
               {profile.summary}
             </p>
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+              Currently open to AI/ML engineering internships and freelance builds — from a first
+              trained model to a deployed, explainable product.
+            </p>
+
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
