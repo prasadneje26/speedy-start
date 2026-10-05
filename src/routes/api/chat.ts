@@ -18,28 +18,38 @@ export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const parsed = BodySchema.safeParse(await request.json());
+        let body: unknown;
+        try {
+          body = await request.json();
+        } catch {
+          return Response.json({ error: "Invalid request payload." }, { status: 400 });
+        }
+
+        const parsed = BodySchema.safeParse(body);
         if (!parsed.success) {
           return Response.json({ error: "Invalid request." }, { status: 400 });
         }
 
-        const key = process.env.LOVABLE_API_KEY;
+        const key = process.env.OPENAI_API_KEY;
         if (!key) {
-          return Response.json({ error: "Assistant is not configured." }, { status: 500 });
+          return Response.json(
+            {
+              error:
+                "The AI assistant is not configured. Add OPENAI_API_KEY to your environment, then restart the app.",
+            },
+            { status: 500 },
+          );
         }
 
-        const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${key}`,
           },
           body: JSON.stringify({
-            model: "google/gemini-3.6-flash",
-            messages: [
-              { role: "system", content: assistantContext },
-              ...parsed.data.messages,
-            ],
+            model: "gpt-4o-mini",
+            messages: [{ role: "system", content: assistantContext }, ...parsed.data.messages],
           }),
         });
 

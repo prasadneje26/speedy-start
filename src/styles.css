@@ -67,11 +67,8 @@
   --surface: oklch(1 0 0);
   --surface-2: oklch(0.965 0.008 75);
   --glow: oklch(0.6 0.2 34 / 22%);
-  --gradient-hero: radial-gradient(
-      900px 620px at 72% 8%,
-      oklch(0.66 0.19 34 / 14%),
-      transparent 62%
-    ),
+  --gradient-hero:
+    radial-gradient(900px 620px at 72% 8%, oklch(0.66 0.19 34 / 14%), transparent 62%),
     radial-gradient(700px 500px at 0% 10%, oklch(0.72 0.16 48 / 10%), transparent 60%);
   --gradient-text: linear-gradient(100deg, oklch(0.28 0.03 264), oklch(0.58 0.2 36));
   --shadow-elevated: 0 24px 60px -28px oklch(0.4 0.03 264 / 30%);
@@ -101,18 +98,13 @@
   --surface: oklch(0.215 0.023 264);
   --surface-2: oklch(0.25 0.025 264);
   --glow: oklch(0.645 0.192 34 / 40%);
-  --gradient-hero: radial-gradient(
-      900px 620px at 72% 8%,
-      oklch(0.645 0.192 34 / 26%),
-      transparent 62%
-    ),
+  --gradient-hero:
+    radial-gradient(900px 620px at 72% 8%, oklch(0.645 0.192 34 / 26%), transparent 62%),
     radial-gradient(700px 500px at 0% 10%, oklch(0.72 0.16 48 / 10%), transparent 60%);
   --gradient-text: linear-gradient(100deg, oklch(0.99 0 0), oklch(0.7 0.19 36));
   --shadow-elevated: 0 24px 60px -24px oklch(0.1 0.02 264 / 80%);
   --shadow-glow: 0 0 0 1px oklch(0.645 0.192 34 / 28%), 0 20px 60px -20px var(--glow);
 }
-
-
 
 @keyframes fade-up {
   from {
@@ -154,6 +146,16 @@
 
   html {
     scroll-behavior: smooth;
+  }
+
+  html.home-scroll-snap {
+    scroll-snap-type: y proximity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.home-scroll-snap {
+      scroll-snap-type: none;
+    }
   }
 
   body {
@@ -244,4 +246,176 @@
     color-mix(in oklab, var(--primary) 40%, transparent) 58%,
     transparent 71%
   );
+}
+
+/* ─── Reveal animations ───────────────────────────────────────────────────── */
+
+/*
+ * Elements start hidden. Adding .is-visible triggers the entrance.
+ * Uses will-change: transform, opacity so the browser composites on the GPU.
+ * All durations/delays use CSS custom properties so JS can stagger easily
+ * by just setting --reveal-delay on the element inline.
+ *
+ * prefers-reduced-motion: skip transform, only fade lightly.
+ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide from left */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide from right */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(36px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Fade only (for subtle elements) */
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity;
+}
+
+.reveal-fade.is-visible {
+  opacity: 1;
+}
+
+/* Scale up (for cards and image) */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94) translateY(20px);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.reveal-scale.is-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-fade,
+  .reveal-scale {
+    opacity: 0;
+    transform: none;
+    transition: opacity 0.4s ease var(--reveal-delay, 0ms);
+  }
+
+  .reveal.is-visible,
+  .reveal-left.is-visible,
+  .reveal-right.is-visible,
+  .reveal-fade.is-visible,
+  .reveal-scale.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Section cinematic slide-in: the section wrapper itself */
+.section-slide {
+  opacity: 0;
+  transform: translateY(60px);
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.section-slide.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-slide {
+    transform: none;
+    transition: opacity 0.5s ease var(--reveal-delay, 0ms);
+  }
+  .section-slide.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── Cinematic slide sections (homepage) ─────────────────────────────────── */
+
+.slide-section {
+  --slide-enter: 1;
+  --slide-exit: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-section--snap {
+  min-height: 100dvh;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+.slide-section--snap .slide-section__inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-section__inner {
+  min-height: inherit;
+  width: 100%;
+  transform: translate3d(0, calc((1 - var(--slide-enter)) * 52px - var(--slide-exit) * 36px), 0);
+  opacity: calc(var(--slide-enter) * (1 - var(--slide-exit) * 0.45));
+  will-change: transform, opacity;
+}
+
+/* Parallax accent — subtle depth on portrait / hero visuals */
+.slide-parallax {
+  transform: translate3d(0, calc(var(--slide-exit, 0) * -18px), 0);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-section__inner,
+  .slide-parallax {
+    transform: none !important;
+    opacity: 1 !important;
+  }
 }

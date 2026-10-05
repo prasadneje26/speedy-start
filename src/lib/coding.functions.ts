@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 const GITHUB_USER = "prasadneje26";
 const LEETCODE_USER = "parshyaneje26";
+const ALFA_LEETCODE_API = "https://alfa-leetcode-api.onrender.com";
 
 export type ContributionDay = { date: string; count: number; level: number };
 
@@ -54,11 +55,22 @@ function streaks(days: ContributionDay[]) {
     running = d.count > 0 ? running + 1 : 0;
     if (running > longest) longest = running;
   }
+
+  // Current streak: count backwards, skipping today if it has no activity yet
   let current = 0;
-  for (let i = days.length - 1; i >= 0; i -= 1) {
-    if (days[i].count > 0) current += 1;
-    else if (i !== days.length - 1) break;
+  const today = new Date().toISOString().slice(0, 10);
+  let i = days.length - 1;
+
+  // Skip today if no contributions yet (it's still in progress)
+  if (i >= 0 && days[i].date === today && days[i].count === 0) {
+    i -= 1;
   }
+
+  while (i >= 0 && days[i].count > 0) {
+    current += 1;
+    i -= 1;
+  }
+
   return { current, longest };
 }
 
@@ -74,17 +86,39 @@ function levelFor(count: number, max: number) {
 export const getGithubStats = createServerFn({ method: "GET" }).handler(
   async (): Promise<GithubStats | null> => {
     try {
-      const headers = { Accept: "application/vnd.github+json", "User-Agent": "portfolio" };
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+
+      const headers: Record<string, string> = {
+        Accept: "application/vnd.github+json",
+        "User-Agent": "portfolio-site",
+        "X-GitHub-Api-Version": "2022-11-28",
+      };
+      if (process.env.GITHUB_TOKEN) {
+        headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
+      }
+
       const [userRes, reposRes, contribRes] = await Promise.all([
-        fetch(`https://api.github.com/users/${GITHUB_USER}`, { headers }),
+        fetch(`https://api.github.com/users/${GITHUB_USER}`, {
+          headers,
+          signal: controller.signal,
+        }),
         fetch(`https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=updated`, {
           headers,
+          signal: controller.signal,
         }),
-        fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`),
-      ]);
+        fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`, {
+          headers: { "User-Agent": "portfolio-site" },
+          signal: controller.signal,
+        }),
+      ]).finally(() => clearTimeout(timeout));
 
-      if (!userRes.ok) return null;
-      const user = (await userRes.json()) as Record<string, never> & {
+      if (!userRes.ok) {
+        console.error(`GitHub user API error: ${userRes.status}`);
+        return null;
+      }
+
+      const user = (await userRes.json()) as {
         login: string;
         name: string | null;
         avatar_url: string;
@@ -111,7 +145,10 @@ export const getGithubStats = createServerFn({ method: "GET" }).handler(
         const data = (await contribRes.json()) as {
           contributions: { date: string; count: number; level: number }[];
         };
+        // Take the last 371 days (53 weeks × 7) for a full-year heatmap
         calendar = (data.contributions ?? []).slice(-371);
+      } else {
+        console.error(`GitHub contributions API error: ${contribRes.status}`);
       }
 
       const { current, longest } = streaks(calendar);
@@ -142,14 +179,16 @@ export const getGithubStats = createServerFn({ method: "GET" }).handler(
             updatedAt: r.updated_at,
           })),
       };
-    } catch {
+    } catch (err) {
+      console.error("getGithubStats failed:", err);
       return null;
     }
   },
 );
 
+// Fetch calendar for one year from LeetCode
 const LEETCODE_QUERY = `
-query userProfile($username: String!, $year: Int) {
+query userProfile($username: String!, $year: Int!) {
   matchedUser(username: $username) {
     username
     profile { ranking }
@@ -159,62 +198,259 @@ query userProfile($username: String!, $year: Int) {
   allQuestionsCount { difficulty count }
 }`;
 
+async function fetchLeetcodeYear(
+  username: string,
+  year: number,
+  signal: AbortSignal,
+): Promise<{
+  matchedUser: {
+    username: string;
+    profile: { ranking: number | null };
+    submitStatsGlobal: { acSubmissionNum: { difficulty: string; count: number }[] };
+    userCalendar: { submissionCalendar: string; streak: number; totalActiveDays: number } | null;
+  } | null;
+  allQuestionsCount: { difficulty: string; count: number }[];
+} | null> {
+  const res = await fetch("https://leetcode.com/graphql/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Referer: "https://leetcode.com/",
+      Origin: "https://leetcode.com",
+      "X-Requested-With": "XMLHttpRequest",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    },
+    body: JSON.stringify({
+      query: LEETCODE_QUERY,
+      variables: { username, year },
+    }),
+    signal,
+  });
+
+  if (!res.ok) {
+    console.error(`LeetCode GraphQL error for year ${year}: ${res.status}`);
+    return null;
+  }
+
+  const json = (await res.json()) as {
+    data?: {
+      matchedUser: {
+        username: string;
+        profile: { ranking: number | null };
+        submitStatsGlobal: { acSubmissionNum: { difficulty: string; count: number }[] };
+        userCalendar: {
+          submissionCalendar: string;
+          streak: number;
+          totalActiveDays: number;
+        } | null;
+      } | null;
+      allQuestionsCount: { difficulty: string; count: number }[];
+    };
+    errors?: { message: string }[];
+  };
+
+  if (json.errors) {
+    console.error("LeetCode GraphQL errors:", json.errors);
+    return null;
+  }
+
+  return json.data ?? null;
+}
+
+type AlfaLeetcodeProfile = {
+  totalSolved: number;
+  easySolved: number;
+  mediumSolved: number;
+  hardSolved: number;
+  totalEasy: number;
+  totalMedium: number;
+  totalHard: number;
+  ranking: number | null;
+  submissionCalendar: Record<string, number>;
+};
+
+async function fetchAlfaLeetcodeProfile(
+  username: string,
+  signal: AbortSignal,
+): Promise<AlfaLeetcodeProfile | null> {
+  const res = await fetch(`${ALFA_LEETCODE_API}/${username}/profile`, {
+    headers: { "User-Agent": "portfolio-site", Accept: "application/json" },
+    signal,
+  });
+
+  if (!res.ok) {
+    console.error(`alfa-leetcode-api profile error: ${res.status}`);
+    return null;
+  }
+
+  const data = (await res.json()) as AlfaLeetcodeProfile & {
+    submissionCalendar?: Record<string, number> | string;
+  };
+
+  if (typeof data.submissionCalendar === "string") {
+    try {
+      data.submissionCalendar = JSON.parse(data.submissionCalendar) as Record<string, number>;
+    } catch {
+      data.submissionCalendar = {};
+    }
+  }
+
+  return data;
+}
+
+function calendarFromSubmissionMap(
+  byDate: Map<string, number>,
+  now = new Date(),
+): ContributionDay[] {
+  const calendar: ContributionDay[] = [];
+  const max = byDate.size > 0 ? Math.max(1, ...byDate.values()) : 1;
+
+  for (let i = 364; i >= 0; i -= 1) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    const count = byDate.get(key) ?? 0;
+    calendar.push({ date: key, count, level: levelFor(count, max) });
+  }
+
+  return calendar;
+}
+
+function mergeSubmissionCalendars(
+  ...sources: Array<Record<string, number> | string | undefined>
+): Map<string, number> {
+  const byDate = new Map<string, number>();
+
+  for (const source of sources) {
+    if (!source) continue;
+
+    const parsed =
+      typeof source === "string" ? (JSON.parse(source) as Record<string, number>) : source;
+
+    for (const [ts, count] of Object.entries(parsed)) {
+      const date = new Date(Number(ts) * 1000).toISOString().slice(0, 10);
+      byDate.set(date, (byDate.get(date) ?? 0) + Number(count));
+    }
+  }
+
+  return byDate;
+}
+
+async function fetchLeetcodeViaAlfa(
+  username: string,
+  signal: AbortSignal,
+): Promise<LeetcodeStats | null> {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const prevYear = currentYear - 1;
+
+  const [profileRes, calendarCurrentRes, calendarPrevRes] = await Promise.all([
+    fetchAlfaLeetcodeProfile(username, signal),
+    fetch(`${ALFA_LEETCODE_API}/${username}/calendar?year=${currentYear}`, {
+      headers: { "User-Agent": "portfolio-site", Accept: "application/json" },
+      signal,
+    }),
+    fetch(`${ALFA_LEETCODE_API}/${username}/calendar?year=${prevYear}`, {
+      headers: { "User-Agent": "portfolio-site", Accept: "application/json" },
+      signal,
+    }),
+  ]);
+
+  if (!profileRes) return null;
+
+  const calendarPayloads: Array<Record<string, number> | string | undefined> = [
+    profileRes.submissionCalendar,
+  ];
+
+  if (calendarCurrentRes.ok) {
+    const current = (await calendarCurrentRes.json()) as { submissionCalendar?: string };
+    calendarPayloads.push(current.submissionCalendar);
+  }
+
+  if (calendarPrevRes.ok) {
+    const prev = (await calendarPrevRes.json()) as { submissionCalendar?: string };
+    calendarPayloads.push(prev.submissionCalendar);
+  }
+
+  const byDate = mergeSubmissionCalendars(...calendarPayloads);
+  const calendar = calendarFromSubmissionMap(byDate, now);
+  const { current, longest } = streaks(calendar);
+
+  return {
+    username,
+    ranking: profileRes.ranking ?? null,
+    totalSolved: profileRes.totalSolved,
+    easySolved: profileRes.easySolved,
+    mediumSolved: profileRes.mediumSolved,
+    hardSolved: profileRes.hardSolved,
+    easyTotal: profileRes.totalEasy,
+    mediumTotal: profileRes.totalMedium,
+    hardTotal: profileRes.totalHard,
+    acceptanceRate: null,
+    submissionsLastYear: calendar.reduce((s, d) => s + d.count, 0),
+    currentStreak: current,
+    longestStreak: longest,
+    activeDays: calendar.filter((d) => d.count > 0).length,
+    calendar,
+  };
+}
+
 export const getLeetcodeStats = createServerFn({ method: "GET" }).handler(
   async (): Promise<LeetcodeStats | null> => {
-    try {
-      const res = await fetch("https://leetcode.com/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Referer: "https://leetcode.com",
-          "User-Agent": "Mozilla/5.0 portfolio",
-        },
-        body: JSON.stringify({
-          query: LEETCODE_QUERY,
-          variables: { username: LEETCODE_USER, year: new Date().getFullYear() },
-        }),
-      });
-      if (!res.ok) return null;
-      const json = (await res.json()) as {
-        data?: {
-          matchedUser: {
-            username: string;
-            profile: { ranking: number | null };
-            submitStatsGlobal: { acSubmissionNum: { difficulty: string; count: number }[] };
-            userCalendar: {
-              submissionCalendar: string;
-              streak: number;
-              totalActiveDays: number;
-            } | null;
-          } | null;
-          allQuestionsCount: { difficulty: string; count: number }[];
-        };
-      };
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
-      const u = json.data?.matchedUser;
-      if (!u) return null;
+    try {
+      try {
+        const alfa = await fetchLeetcodeViaAlfa(LEETCODE_USER, controller.signal);
+        if (alfa) return alfa;
+      } catch (err) {
+        console.error("alfa-leetcode-api failed:", err);
+      }
+
+      // Fallback to direct GraphQL when the wrapper API is unavailable.
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const prevYear = currentYear - 1;
+
+      const [currentData, prevData] = await Promise.all([
+        fetchLeetcodeYear(LEETCODE_USER, currentYear, controller.signal),
+        fetchLeetcodeYear(LEETCODE_USER, prevYear, controller.signal),
+      ]);
+
+      if (!currentData?.matchedUser) {
+        console.error("LeetCode: no matched user in response");
+        return null;
+      }
+
+      const u = currentData.matchedUser;
 
       const pick = (arr: { difficulty: string; count: number }[], d: string) =>
         arr.find((x) => x.difficulty === d)?.count ?? 0;
 
       const solved = u.submitStatsGlobal.acSubmissionNum;
-      const totals = json.data?.allQuestionsCount ?? [];
-
-      const rawCalendar: Record<string, number> = u.userCalendar?.submissionCalendar
-        ? JSON.parse(u.userCalendar.submissionCalendar)
-        : {};
+      const totals = currentData.allQuestionsCount ?? [];
 
       const byDate = new Map<string, number>();
-      for (const [ts, count] of Object.entries(rawCalendar)) {
-        const date = new Date(Number(ts) * 1000).toISOString().slice(0, 10);
-        byDate.set(date, (byDate.get(date) ?? 0) + Number(count));
-      }
+
+      const addCalendar = (raw: string | undefined) => {
+        if (!raw) return;
+        const parsed: Record<string, number> = JSON.parse(raw);
+        for (const [ts, count] of Object.entries(parsed)) {
+          const date = new Date(Number(ts) * 1000).toISOString().slice(0, 10);
+          byDate.set(date, (byDate.get(date) ?? 0) + Number(count));
+        }
+      };
+
+      addCalendar(prevData?.matchedUser?.userCalendar?.submissionCalendar);
+      addCalendar(u.userCalendar?.submissionCalendar);
 
       const calendar: ContributionDay[] = [];
-      const today = new Date();
-      const max = Math.max(1, ...byDate.values());
+      const max = byDate.size > 0 ? Math.max(1, ...byDate.values()) : 1;
       for (let i = 364; i >= 0; i -= 1) {
-        const d = new Date(today);
+        const d = new Date(now);
         d.setDate(d.getDate() - i);
         const key = d.toISOString().slice(0, 10);
         const count = byDate.get(key) ?? 0;
@@ -235,13 +471,16 @@ export const getLeetcodeStats = createServerFn({ method: "GET" }).handler(
         hardTotal: pick(totals, "Hard"),
         acceptanceRate: null,
         submissionsLastYear: calendar.reduce((s, d) => s + d.count, 0),
-        currentStreak: current,
-        longestStreak: Math.max(longest, u.userCalendar?.streak ?? 0),
+        currentStreak: Math.max(current, u.userCalendar?.streak ?? 0),
+        longestStreak: longest,
         activeDays: u.userCalendar?.totalActiveDays ?? calendar.filter((d) => d.count > 0).length,
         calendar,
       };
-    } catch {
+    } catch (err) {
+      console.error("getLeetcodeStats failed:", err);
       return null;
+    } finally {
+      clearTimeout(timeout);
     }
   },
 );

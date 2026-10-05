@@ -35,9 +35,9 @@ export function ResumeButton({
   return (
     <a
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      {...(hasResume ? { download: "Prasad_Neje_CV.pdf" } : {})}
+      {...(hasResume
+        ? { download: "Prasad_Neje_CV.pdf" }
+        : { target: "_blank", rel: "noopener noreferrer" })}
       onClick={onClick}
       title={hasResume ? "Download Prasad Neje's CV (PDF)" : "Resume unavailable — open LinkedIn"}
       className={`${base} ${variants[variant]} ${className}`}

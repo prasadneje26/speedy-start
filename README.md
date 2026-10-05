@@ -1,6 +1,7 @@
 # AI Persona Hub
 
 make according to following info take the personal details from above pdf and make it advance and proffessional and use any type of theme from given images
+
 1. Project Overview
 
 Project Name
@@ -11,25 +12,25 @@ Core idea
 
 A modern, interactive portfolio website that presents your:
 
- AI/ML skills
+AI/ML skills
 
- GenAI expertise
+GenAI expertise
 
- Projects
+Projects
 
- Research
+Research
 
- Certifications
+Certifications
 
- Experience
+Experience
 
- Blogs
+Blogs
 
- Resume
+Resume
 
- GitHub activity
+GitHub activity
 
- Coding achievements
+Coding achievements
 
 while also providing an AI assistant that can answer questions about your professional profile.
 
@@ -57,15 +58,15 @@ The website itself becomes a project demonstrating:
 
 A recruiter should quickly find:
 
- Resume
+Resume
 
- Projects
+Projects
 
- Skills
+Skills
 
- Research
+Research
 
- Contact information
+Contact information
 
 5. Differentiate yourself
 
@@ -83,13 +84,13 @@ User 2 — Developer/Student
 
 They may want to:
 
- Explore projects
+Explore projects
 
- Read blogs
+Read blogs
 
- See GitHub
+See GitHub
 
- Learn from your work
+Learn from your work
 
 User 3 — Admin
 
@@ -97,21 +98,21 @@ That's you.
 
 You should be able to:
 
- Add projects
+Add projects
 
- Edit projects
+Edit projects
 
- Add certificates
+Add certificates
 
- Publish blogs
+Publish blogs
 
- Update skills
+Update skills
 
- Upload resume
+Upload resume
 
- Read messages
+Read messages
 
- View analytics
+View analytics
 
 without changing source code.
 
@@ -133,13 +134,13 @@ Use TypeScript instead of plain JavaScript.
 
 Benefits:
 
- Better type safety
+Better type safety
 
- Better AI-generated code
+Better AI-generated code
 
- Easier debugging
+Easier debugging
 
- Professional development practice
+Professional development practice
 
 Tailwind CSS
 
@@ -149,13 +150,13 @@ Framer Motion
 
 For:
 
- Page transitions
+Page transitions
 
- Scroll animations
+Scroll animations
 
- Card animations
+Card animations
 
- Hero animations
+Hero animations
 
 React Router
 
@@ -469,31 +470,31 @@ Style
 
 Use:
 
- Subtle glassmorphism
+Subtle glassmorphism
 
- Thin borders
+Thin borders
 
- Soft glow
+Soft glow
 
- Large typography
+Large typography
 
- Lots of whitespace
+Lots of whitespace
 
- Minimal gradients
+Minimal gradients
 
- Professional cards
+Professional cards
 
 Avoid:
 
- Excessive neon
+Excessive neon
 
- Huge 3D objects
+Huge 3D objects
 
- Too many particles
+Too many particles
 
- Excessive animations
+Excessive animations
 
- Gaming-style UI
+Gaming-style UI
 
 The goal is:
 
@@ -573,15 +574,22 @@ Don't make the technology stack the portfolio. Make your work the portfolio.
 
 The React/FastAPI implementation proves that you can build software; the projects, research, AI assistant, and technical explanations prove that you understand AI engineering.
 
-This project was built with [Lovable](https://lovable.dev).
+## Deployment
 
-## Build with Lovable
+This project is designed for a Nitro-based deployment flow and is compatible with Cloudflare Pages hosting.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/033bf29c-7394-4337-82f3-66f5af3b2608).
+Recommended production setup:
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+1. Set the required environment variables in the deployment dashboard or secret manager.
+2. Run the production build locally to confirm the site is valid:
+
+```sh
+npm run build
+```
+
+3. Deploy the generated output through your Cloudflare Pages or Nitro hosting workflow.
+4. If the AI assistant is enabled, add `OPENAI_API_KEY` in the deployment environment and restart the app.
+5. If the contact form should notify a webhook or CRM, add `CONTACT_WEBHOOK_URL` in the deployment environment.
 
 ## Development
 
@@ -591,5 +599,14 @@ Prefer working locally? You need Node.js and npm — [install with nvm](https://
 git clone <this-repository-url>
 cd <repository-name>
 npm i
+cp .env.example .env
 npm run dev
 ```
+
+Environment variables:
+
+- `OPENAI_API_KEY`: optional, enables the AI assistant chat route.
+- `CONTACT_WEBHOOK_URL`: optional, posts contact form submissions to a webhook.
+- `GITHUB_TOKEN`: optional, increases GitHub API rate limits for live stats.
+
+For a local dev preview, the app works without these keys; the assistant and webhooks simply stay inactive until configured.

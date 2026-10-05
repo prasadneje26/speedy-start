@@ -77,7 +77,7 @@ export function AiAssistant() {
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">Portfolio AI Assistant</p>
               <p className="truncate text-[11px] text-muted-foreground">
-                Grounded in Prasad&apos;s profile
+                Built around Prasad&apos;s profile
               </p>
             </div>
           </div>
@@ -97,7 +97,7 @@ export function AiAssistant() {
             ))}
             {loading && (
               <div className="max-w-[60%] rounded-2xl rounded-bl-sm bg-surface-2 px-3.5 py-2 text-sm text-muted-foreground">
-                Thinking…
+                Thinking through the details…
               </div>
             )}
             {messages.length === 1 && (

@@ -1,10 +1,6 @@
-<!-- LOVABLE:BEGIN -->
+# Project Guidelines
+
 > [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
-<!-- LOVABLE:END -->
+> This is a TanStack Start portfolio project built with React, TypeScript, and Tailwind CSS.
+> Maintain clean commit history and ensure the main branch remains in a working state.
+> The project is deployed via Nitro to Cloudflare Pages with OpenAI integration for the AI assistant.

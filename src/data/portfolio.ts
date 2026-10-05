@@ -1,7 +1,6 @@
-import headshot from "@/assets/prasad-headshot.png.asset.json";
-import cv from "@/assets/prasad-cv.pdf.asset.json";
+export const PORTFOLIO_STORAGE_KEY = "portfolio-admin-content-v1";
 
-export const profile = {
+export const fallbackProfile = {
   name: "Prasad Vitthal Neje",
   shortName: "Prasad Neje",
   roles: ["AI Engineer", "ML Engineer", "GenAI Developer"],
@@ -16,9 +15,36 @@ export const profile = {
   leetcodeUser: "parshyaneje26",
   leetcode: "https://leetcode.com/u/parshyaneje26/",
   linkedin: "https://www.linkedin.com/in/prasad-neje-9a905a332",
-  photo: headshot.url,
-  resumeUrl: cv.url,
+  photo: "/prasad-headshot.png",
+  resumeUrl: "/prasad-cv.pdf",
 };
+
+function readStoredPortfolio<T>(key: "profile" | "projects", fallback: T): T {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(PORTFOLIO_STORAGE_KEY);
+    if (!raw) return fallback;
+
+    const parsed = JSON.parse(raw) as { profile?: Partial<typeof fallbackProfile>; projects?: T };
+
+    if (key === "profile") {
+      return { ...fallback, ...(parsed.profile ?? {}) } as T;
+    }
+
+    if (key === "projects" && Array.isArray(parsed.projects)) {
+      return parsed.projects as T;
+    }
+
+    return fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export const profile = readStoredPortfolio("profile", fallbackProfile);
 
 export const stats = [
   { value: "8.65", label: "CGPA — B.Tech CSE (AI)" },
@@ -80,7 +106,7 @@ export type Project = {
   repo?: string;
 };
 
-export const projects: Project[] = [
+export const fallbackProjects: Project[] = [
   {
     slug: "ai-college-cap-counseling",
     title: "AI College CAP Counseling Platform",
@@ -218,9 +244,103 @@ export const projects: Project[] = [
   },
 ];
 
+export const projects = readStoredPortfolio("projects", fallbackProjects);
+
+export async function hydratePortfolioFromServer() {
+  if (typeof window === "undefined") return;
+
+  try {
+    const response = await fetch("/api/portfolio", {
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) return;
+
+    const payload = (await response.json()) as {
+      profile?: Partial<typeof fallbackProfile>;
+      projects?: Project[];
+    };
+
+    if (payload.profile) {
+      Object.keys(profile).forEach((key) => {
+        delete (profile as Record<string, unknown>)[key];
+      });
+      Object.assign(profile, { ...fallbackProfile, ...payload.profile });
+    }
+
+    if (Array.isArray(payload.projects)) {
+      projects.splice(0, projects.length, ...payload.projects);
+    }
+  } catch {
+    // Fall back to the browser-local data if the server store is unavailable.
+  }
+}
+
+export async function savePortfolioAdminData(next: {
+  profile?: Partial<typeof fallbackProfile>;
+  projects?: Project[];
+}) {
+  const payload = {
+    profile: { ...profile, ...(next.profile ?? {}) },
+    projects: next.projects ?? [...projects],
+  };
+
+  try {
+    const response = await fetch("/api/portfolio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const serverData = (await response.json()) as typeof payload;
+      Object.keys(profile).forEach((key) => {
+        delete (profile as Record<string, unknown>)[key];
+      });
+      Object.assign(profile, { ...fallbackProfile, ...(serverData.profile ?? {}) });
+      projects.splice(0, projects.length, ...(serverData.projects ?? [...projects]));
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(serverData));
+      }
+      return;
+    }
+  } catch {
+    // Fall through to the browser-local fallback below.
+  }
+
+  if (typeof window !== "undefined") {
+    const updatedProfile = { ...profile, ...(next.profile ?? {}) };
+    const updatedProjects = next.projects ?? [...projects];
+
+    Object.keys(profile).forEach((key) => {
+      delete (profile as Record<string, unknown>)[key];
+    });
+    Object.assign(profile, updatedProfile);
+    projects.splice(0, projects.length, ...updatedProjects);
+    window.localStorage.setItem(
+      PORTFOLIO_STORAGE_KEY,
+      JSON.stringify({ profile: updatedProfile, projects: updatedProjects }),
+    );
+  }
+}
+
+export function resetPortfolioAdminData() {
+  if (typeof window !== "undefined") {
+    Object.keys(profile).forEach((key) => {
+      delete (profile as Record<string, unknown>)[key];
+    });
+    Object.assign(profile, fallbackProfile);
+    projects.splice(0, projects.length, ...fallbackProjects);
+    window.localStorage.removeItem(PORTFOLIO_STORAGE_KEY);
+  }
+
+  fetch("/api/portfolio", { method: "DELETE" }).catch(() => undefined);
+}
+
 export const research = {
   title: "IEEE Conference Publication",
-  venue: "2026 2nd International Conference on Computing, Communication and Green Engineering (CCGE)",
+  venue:
+    "2026 2nd International Conference on Computing, Communication and Green Engineering (CCGE)",
   publisher: "IEEE",
   doi: "10.1109/CCGE67142.2026.11581630",
   doiUrl: "https://doi.org/10.1109/CCGE67142.2026.11581630",

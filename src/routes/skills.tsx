@@ -30,8 +30,16 @@ const focus = [
   },
   { label: "Backend & APIs", level: 85, note: "FastAPI, Express, PostgreSQL, auth and RBAC." },
   { label: "GenAI & RAG", level: 82, note: "LLM APIs, retrieval pipelines, grounded assistants." },
-  { label: "Frontend engineering", level: 78, note: "React, TypeScript, Tailwind, data dashboards." },
-  { label: "DSA & problem solving", level: 80, note: "C++ data structures, algorithms, complexity." },
+  {
+    label: "Frontend engineering",
+    level: 78,
+    note: "React, TypeScript, Tailwind, data dashboards.",
+  },
+  {
+    label: "DSA & problem solving",
+    level: 80,
+    note: "C++ data structures, algorithms, complexity.",
+  },
 ];
 
 function Skills() {
@@ -54,7 +62,10 @@ function Skills() {
                   <span className="font-mono text-xs text-primary">{f.level}%</span>
                 </div>
                 <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${f.level}%` }} />
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${f.level}%` }}
+                  />
                 </div>
                 <p className="mt-1.5 text-xs text-muted-foreground">{f.note}</p>
               </div>

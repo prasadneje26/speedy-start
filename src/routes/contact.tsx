@@ -35,8 +35,9 @@ const schema = z.object({
 function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     const parsed = schema.safeParse(form);
     if (!parsed.success) {
@@ -45,14 +46,43 @@ function Contact() {
       setErrors(next);
       return;
     }
+
     setErrors({});
-    const subject = encodeURIComponent(`Portfolio enquiry from ${parsed.data.name}`);
-    const body = encodeURIComponent(`${parsed.data.message}\n\n— ${parsed.data.name} (${parsed.data.email})`);
-    window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-    toast.success("Opening your email client…");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.data),
+      });
+
+      const data = (await response.json()) as { error?: string; message?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Something went wrong while sending your message.");
+      }
+
+      setForm({ name: "", email: "", message: "" });
+      toast.success(data.message ?? "Thanks — your message has been received.");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong while sending your message.";
+
+      const subject = encodeURIComponent(`Portfolio enquiry from ${parsed.data.name}`);
+      const body = encodeURIComponent(
+        `${parsed.data.message}\n\n— ${parsed.data.name} (${parsed.data.email})`,
+      );
+
+      window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  const field = "w-full rounded-lg border border-border bg-surface-2 px-3.5 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-primary/60";
+  const field =
+    "w-full rounded-lg border border-border bg-surface-2 px-3.5 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-primary/60";
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-16">
@@ -147,9 +177,10 @@ function Contact() {
           </div>
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            disabled={isSubmitting}
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Send message <Send className="h-4 w-4" />
+            {isSubmitting ? "Sending..." : "Send message"} <Send className="h-4 w-4" />
           </button>
         </form>
       </div>

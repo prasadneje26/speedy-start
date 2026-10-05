@@ -65,7 +65,8 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border py-5 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {profile.name} · Built with React, TanStack Start & Lovable AI
+        © {new Date().getFullYear()} {profile.name} · Built with React and a custom portfolio
+        experience
       </div>
     </footer>
   );

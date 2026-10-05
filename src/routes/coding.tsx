@@ -31,10 +31,12 @@ function Panel({
   children,
   loading,
   error,
+  onRetry,
 }: {
   children: React.ReactNode;
   loading: boolean;
   error: boolean;
+  onRetry?: () => void;
 }) {
   if (loading)
     return (
@@ -46,8 +48,17 @@ function Panel({
     );
   if (error)
     return (
-      <div className="card-surface grid min-h-[280px] place-items-center p-6 text-center text-sm text-muted-foreground">
-        Live data is temporarily unavailable. Try refreshing in a moment.
+      <div className="card-surface grid min-h-[280px] place-items-center gap-3 p-6 text-center text-sm text-muted-foreground">
+        <p>Live data is temporarily unavailable. Try refreshing in a moment.</p>
+        {onRetry && (
+          <button
+            type="button"
+            onClick={onRetry}
+            className="inline-flex items-center gap-2 rounded-md border border-border px-3.5 py-2 text-xs font-semibold hover:border-primary/60"
+          >
+            <RefreshCw className="h-3.5 w-3.5" /> Retry
+          </button>
+        )}
       </div>
     );
   return <>{children}</>;
@@ -60,14 +71,16 @@ function Coding() {
   const gh = useQuery({
     queryKey: ["github-stats"],
     queryFn: () => github(),
-    staleTime: 5 * 60_000,
-    refetchInterval: 5 * 60_000,
+    staleTime: 2 * 60_000,
+    refetchInterval: 2 * 60_000,
+    refetchOnWindowFocus: true,
   });
   const lc = useQuery({
     queryKey: ["leetcode-stats"],
     queryFn: () => leetcode(),
-    staleTime: 5 * 60_000,
-    refetchInterval: 5 * 60_000,
+    staleTime: 2 * 60_000,
+    refetchInterval: 2 * 60_000,
+    refetchOnWindowFocus: true,
   });
 
   return (
@@ -101,7 +114,11 @@ function Coding() {
         </div>
 
         <div className="mt-5">
-          <Panel loading={gh.isPending} error={gh.isError || (!gh.isPending && !gh.data)}>
+          <Panel
+            loading={gh.isPending}
+            error={gh.isError || (!gh.isPending && !gh.data)}
+            onRetry={() => gh.refetch()}
+          >
             {gh.data && (
               <div className="card-surface p-6">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -183,7 +200,11 @@ function Coding() {
         </div>
 
         <div className="mt-5">
-          <Panel loading={lc.isPending} error={lc.isError || (!lc.isPending && !lc.data)}>
+          <Panel
+            loading={lc.isPending}
+            error={lc.isError || (!lc.isPending && !lc.data)}
+            onRetry={() => lc.refetch()}
+          >
             {lc.data && (
               <div className="card-surface p-6">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -204,7 +225,10 @@ function Coding() {
                     { label: "Medium", solved: lc.data.mediumSolved, total: lc.data.mediumTotal },
                     { label: "Hard", solved: lc.data.hardSolved, total: lc.data.hardTotal },
                   ].map((d) => (
-                    <div key={d.label} className="rounded-xl border border-border bg-surface-2/50 p-4">
+                    <div
+                      key={d.label}
+                      className="rounded-xl border border-border bg-surface-2/50 p-4"
+                    >
                       <div className="flex items-baseline justify-between">
                         <p className="text-sm font-semibold">{d.label}</p>
                         <p className="font-mono text-xs text-muted-foreground">

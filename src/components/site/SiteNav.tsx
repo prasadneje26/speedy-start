@@ -5,13 +5,11 @@ import { profile } from "@/data/portfolio";
 import { ResumeButton } from "@/components/site/ResumeButton";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
 
-
 const socials = [
   { href: `mailto:${profile.email}`, Icon: Mail, label: "Email Prasad Neje" },
   { href: profile.github, Icon: Github, label: "GitHub profile" },
   { href: profile.linkedin, Icon: Linkedin, label: "LinkedIn profile" },
 ] as const;
-
 
 const links = [
   { to: "/", label: "Home" },
@@ -24,6 +22,7 @@ const links = [
   { to: "/certifications", label: "Certifications" },
   { to: "/blog", label: "Blog" },
   { to: "/contact", label: "Contact" },
+  { to: "/admin", label: "Admin" },
 ] as const;
 
 export function SiteNav() {
@@ -83,7 +82,6 @@ export function SiteNav() {
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
-
       </nav>
 
       {open && (
@@ -120,8 +118,6 @@ export function SiteNav() {
               ))}
               <ThemeToggle className="ml-auto" />
             </div>
-
-
           </div>
         </div>
       )}

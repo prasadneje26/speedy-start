@@ -1,24 +1,12 @@
 import type { ContributionDay } from "@/lib/coding.functions";
 
-export function ContributionGrid({
-  days,
-  label,
-}: {
-  days: ContributionDay[];
-  label: string;
-}) {
+export function ContributionGrid({ days, label }: { days: ContributionDay[]; label: string }) {
   if (!days.length) return null;
 
   const weeks: ContributionDay[][] = [];
   for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
 
-  const tone = [
-    "bg-secondary/60",
-    "bg-primary/25",
-    "bg-primary/45",
-    "bg-primary/70",
-    "bg-primary",
-  ];
+  const tone = ["bg-secondary/60", "bg-primary/25", "bg-primary/45", "bg-primary/70", "bg-primary"];
 
   return (
     <div className="min-w-0">

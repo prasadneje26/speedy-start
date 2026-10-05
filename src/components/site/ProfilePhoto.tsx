@@ -8,12 +8,17 @@ import { profile } from "@/data/portfolio";
  */
 export function ProfilePhoto({ className = "" }: { className?: string }) {
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!profile.photo) return;
+    if (!profile.photo) {
+      setError(true);
+      return;
+    }
     const img = new Image();
     img.src = profile.photo;
     img.onload = () => setLoaded(true);
+    img.onerror = () => setError(true);
   }, []);
 
   const initials = profile.name
@@ -22,18 +27,20 @@ export function ProfilePhoto({ className = "" }: { className?: string }) {
     .slice(0, 2)
     .join("");
 
-  if (!loaded) {
+  // Show monogram if no photo, photo failed to load, or not yet loaded
+  if (!profile.photo || error || !loaded) {
     return (
       <div
         aria-label={`Portrait placeholder for ${profile.name}`}
         role="img"
-        className={`grid h-full w-full place-items-center bg-surface-2 ${className}`}
+        className={`grid h-full w-full place-items-center bg-gradient-to-br from-orange-400 via-orange-500 to-red-600 ${className}`}
       >
-        <span className="font-display text-6xl font-bold text-gradient">{initials}</span>
+        <span className="font-display text-6xl font-bold text-white drop-shadow-lg">
+          {initials}
+        </span>
       </div>
     );
   }
-
 
   return (
     <img
@@ -44,7 +51,7 @@ export function ProfilePhoto({ className = "" }: { className?: string }) {
       loading="eager"
       decoding="async"
       sizes="(max-width: 768px) 80vw, 340px"
-      className={`h-full w-full object-cover object-top ${className}`}
+      className={`h-full w-full object-cover object-center ${className}`}
     />
   );
 }
