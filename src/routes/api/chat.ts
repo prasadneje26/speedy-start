@@ -41,7 +41,8 @@ export const Route = createFileRoute("/api/chat")({
           );
         }
 
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        const baseUrl = (process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1").replace(/\/$/, "");
+        const res = await fetch(`${baseUrl}/chat/completions`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
