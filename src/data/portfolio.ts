@@ -6,7 +6,8 @@ export const profile = {
   summary:
     "B.Tech CSE (Artificial Intelligence) student at Vishwakarma Institute of Technology, Pune. I work across machine learning, LLM-powered applications and full-stack engineering — designing microservice architectures, training predictive models and shipping AI products end to end.",
   location: "Pune, Maharashtra, India",
-  email: "prasad.neje@vit.edu",
+  email: "prasadvitthalneje26@gmail.com",
+  collegeEmail: "prasad.neje@vit.edu",
   phone: "+91 77986 36226",
   github: "https://github.com/prasadneje26",
   githubUser: "prasadneje26",

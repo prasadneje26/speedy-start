@@ -20,7 +20,7 @@ export async function deliverContactSubmission(payload: ContactSubmission) {
   }
 
   const resendApiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.CONTACT_TO_EMAIL ?? payload.email;
+  const toEmail = process.env.CONTACT_TO_EMAIL ?? "prasadvitthalneje26@gmail.com";
   const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
   if (!resendApiKey || !fromEmail) {

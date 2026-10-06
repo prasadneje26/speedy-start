@@ -36,6 +36,7 @@ function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [botField, setBotField] = useState("");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,20 +52,24 @@ function Contact() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/contact", {
+      // Netlify Forms: POST to the static skeleton so the CDN form handler (not SSR) receives it.
+      const response = await fetch("/__forms.html", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          "form-name": "contact",
+          "bot-field": botField,
+          subject: `Portfolio enquiry from ${parsed.data.name}`,
+          ...parsed.data,
+        }).toString(),
       });
 
-      const data = (await response.json()) as { error?: string; message?: string };
-
       if (!response.ok) {
-        throw new Error(data.error ?? "Something went wrong while sending your message.");
+        throw new Error("Something went wrong while sending your message.");
       }
 
       setForm({ name: "", email: "", message: "" });
-      toast.success(data.message ?? "Thanks — your message has been received.");
+      toast.success("Thanks — your message has been received.");
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Something went wrong while sending your message.";
@@ -103,6 +108,12 @@ function Contact() {
               <Mail className="h-4 w-4 shrink-0 text-primary" /> {profile.email}
             </a>
             <a
+              href={`mailto:${profile.collegeEmail}`}
+              className="flex items-center gap-3 text-muted-foreground hover:text-foreground"
+            >
+              <Mail className="h-4 w-4 shrink-0 text-primary" /> {profile.collegeEmail}
+            </a>
+            <a
               href={`tel:${profile.phone.replace(/\s/g, "")}`}
               className="flex items-center gap-3 text-muted-foreground hover:text-foreground"
             >
@@ -130,7 +141,27 @@ function Contact() {
           </div>
         </div>
 
-        <form onSubmit={submit} className="card-surface space-y-4 p-6">
+        <form
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          onSubmit={submit}
+          className="card-surface space-y-4 p-6"
+        >
+          <input type="hidden" name="form-name" value="contact" />
+          <p className="hidden">
+            <label>
+              Don't fill this out:{" "}
+              <input
+                name="bot-field"
+                tabIndex={-1}
+                autoComplete="off"
+                value={botField}
+                onChange={(e) => setBotField(e.target.value)}
+              />
+            </label>
+          </p>
           <div>
             <label htmlFor="name" className="text-xs text-muted-foreground">
               Name
