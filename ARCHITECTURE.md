@@ -4,9 +4,9 @@
 
 ```mermaid
 flowchart TD
-    User[Visitor / Recruiter / Admin] --> Browser[Browser]
+    User[Visitor / Recruiter] --> Browser[Browser]
     Browser --> Router[TanStack Router]
-    Router --> Pages[Pages: Home, About, Projects, Coding, Contact, Admin]
+    Router --> Pages[Pages: Home, About, Projects, Coding, Contact]
     Pages --> UI[React Components + Tailwind UI]
     Pages --> Data[Portfolio Data Layer]
 
@@ -15,7 +15,6 @@ flowchart TD
     API --> Chat[Chat API]
     API --> Fetch[External Data Fetchers]
 
-    Data --> LocalStorage[localStorage Admin State]
     Fetch --> Github[GitHub API]
     Fetch --> LeetCode[LeetCode fallback endpoints]
     Contact --> Webhook[Optional external webhook]
@@ -33,7 +32,6 @@ flowchart TD
       Contact
       Chat
       Fetch
-      LocalStorage
     end
 ```
 
@@ -45,10 +43,10 @@ flowchart TD
 
 - Content source
   - The portfolio data lives in `src/data/portfolio.ts`.
-  - It provides profile data, project content, experience, certifications, and admin editing state.
+  - It provides profile data, project content, experience and certifications, plus the CV link served from `public/prasad-cv.pdf`.
 
 - Feature pages
-  - `src/routes/*` contains content pages such as home, projects, coding, contact, and admin.
+  - `src/routes/*` contains content pages such as home, projects, coding, and contact.
   - These pages consume the portfolio data and render recruiter-facing content.
 
 - API layer
@@ -57,10 +55,6 @@ flowchart TD
 
 - Live data services
   - `src/lib/coding.functions.ts` fetches GitHub and LeetCode data, with fallback behavior for providers that block or limit direct requests.
-
-- Admin flow
-  - `src/routes/admin.tsx` provides a minimal content management interface.
-  - Changes are saved to local storage in the current implementation.
 
 ## Current implementation status
 
@@ -71,16 +65,16 @@ flowchart TD
 - Profile image flow and layout were corrected.
 - GitHub and LeetCode data fetching were fixed with fallback handling.
 - Contact form submission flow was implemented and validated.
-- Admin editor exists for editing portfolio content.
+- Resume download serves the current CV PDF.
 - Assistant route degrades gracefully without a configured API key.
 
 ### Still optional / not required for the base portfolio
 
 - A real OpenAI key for live AI responses.
-- A production-grade database-backed CMS instead of localStorage persistence.
+- A database-backed CMS for editing content without code changes.
 - A full email webhook or CRM integration for contact submissions.
 - Deeper analytics and CMS features for lifecycle management.
 
 ## Recommendation
 
-The project is already functional as a polished personal portfolio and working admin experience without requiring the OpenAI key. The remaining work is mainly production hardening and optional feature expansion rather than core app functionality.
+The project is already functional as a polished personal portfolio without requiring the OpenAI key. The remaining work is mainly production hardening and optional feature expansion rather than core app functionality.

@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CertificationsRouteImport } from './routes/certifications'
 import { Route as CodingRouteImport } from './routes/coding'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -21,7 +20,6 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
-import { Route as ApiPortfolioRouteImport } from './routes/api/portfolio'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
@@ -35,11 +33,6 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CertificationsRoute = CertificationsRouteImport.update({
@@ -87,11 +80,6 @@ const ApiContactRoute = ApiContactRouteImport.update({
   path: '/api/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPortfolioRoute = ApiPortfolioRouteImport.update({
-  id: '/api/portfolio',
-  path: '/api/portfolio',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -116,7 +104,6 @@ const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/certifications': typeof CertificationsRoute
   '/coding': typeof CodingRoute
   '/contact': typeof ContactRoute
@@ -126,7 +113,6 @@ export interface FileRoutesByFullPath {
   '/skills': typeof SkillsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/contact': typeof ApiContactRoute
-  '/api/portfolio': typeof ApiPortfolioRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/blog/': typeof BlogIndexRoute
@@ -135,7 +121,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/certifications': typeof CertificationsRoute
   '/coding': typeof CodingRoute
   '/contact': typeof ContactRoute
@@ -145,7 +130,6 @@ export interface FileRoutesByTo {
   '/skills': typeof SkillsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/contact': typeof ApiContactRoute
-  '/api/portfolio': typeof ApiPortfolioRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/blog': typeof BlogIndexRoute
@@ -155,7 +139,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/certifications': typeof CertificationsRoute
   '/coding': typeof CodingRoute
   '/contact': typeof ContactRoute
@@ -165,7 +148,6 @@ export interface FileRoutesById {
   '/skills': typeof SkillsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/contact': typeof ApiContactRoute
-  '/api/portfolio': typeof ApiPortfolioRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/blog/': typeof BlogIndexRoute
@@ -176,7 +158,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/admin'
     | '/certifications'
     | '/coding'
     | '/contact'
@@ -186,7 +167,6 @@ export interface FileRouteTypes {
     | '/skills'
     | '/api/chat'
     | '/api/contact'
-    | '/api/portfolio'
     | '/blog/$slug'
     | '/projects/$slug'
     | '/blog/'
@@ -195,7 +175,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/admin'
     | '/certifications'
     | '/coding'
     | '/contact'
@@ -205,7 +184,6 @@ export interface FileRouteTypes {
     | '/skills'
     | '/api/chat'
     | '/api/contact'
-    | '/api/portfolio'
     | '/blog/$slug'
     | '/projects/$slug'
     | '/blog'
@@ -214,7 +192,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
-    | '/admin'
     | '/certifications'
     | '/coding'
     | '/contact'
@@ -224,7 +201,6 @@ export interface FileRouteTypes {
     | '/skills'
     | '/api/chat'
     | '/api/contact'
-    | '/api/portfolio'
     | '/blog/$slug'
     | '/projects/$slug'
     | '/blog/'
@@ -234,7 +210,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
   CertificationsRoute: typeof CertificationsRoute
   CodingRoute: typeof CodingRoute
   ContactRoute: typeof ContactRoute
@@ -244,7 +219,6 @@ export interface RootRouteChildren {
   SkillsRoute: typeof SkillsRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiContactRoute: typeof ApiContactRoute
-  ApiPortfolioRoute: typeof ApiPortfolioRoute
   BlogSlugRoute: typeof BlogSlugRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -265,13 +239,6 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/certifications': {
@@ -337,13 +304,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/portfolio': {
-      id: '/api/portfolio'
-      path: '/api/portfolio'
-      fullPath: '/api/portfolio'
-      preLoaderRoute: typeof ApiPortfolioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -378,7 +338,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
   CertificationsRoute: CertificationsRoute,
   CodingRoute: CodingRoute,
   ContactRoute: ContactRoute,
@@ -388,7 +347,6 @@ const rootRouteChildren: RootRouteChildren = {
   SkillsRoute: SkillsRoute,
   ApiChatRoute: ApiChatRoute,
   ApiContactRoute: ApiContactRoute,
-  ApiPortfolioRoute: ApiPortfolioRoute,
   BlogSlugRoute: BlogSlugRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
@@ -397,13 +355,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
