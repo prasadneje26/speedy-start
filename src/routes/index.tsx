@@ -227,10 +227,6 @@ function Home() {
             <div className="absolute inset-[7%] overflow-hidden rounded-full border border-border bg-surface shadow-elevated">
               <ProfilePhoto />
             </div>
-            <div className="glass absolute bottom-2 left-0 animate-float rounded-xl px-4 py-3 shadow-elevated">
-              <p className="font-mono text-[11px] text-primary">CGPA</p>
-              <p className="font-display text-xl font-bold">8.65 / 10</p>
-            </div>
           </div>
         </div>
       </SlideSection>
